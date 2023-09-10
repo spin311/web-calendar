@@ -40,7 +40,7 @@ $(function(){
 
 $(function(){
     console.log("ready");
-    $(document).on("blur", "input", function(){
+    $(document).on("change", "input", function(){
         let month: string, year: number;
         year = parseInt($("#year").val() as string);
         month = ($("#months").val() as string);
@@ -64,7 +64,10 @@ $(function(){
         "December"
     ];
     $("#months").autocomplete({
-        source: availableMonths
+        source: availableMonths,
+        minLength: 0 // Set the minimum length to 0 to show all options on click
+    }).on("click", function() {
+        $(this).autocomplete("search", "");
     });
 });
 
