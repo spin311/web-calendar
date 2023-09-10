@@ -30,7 +30,9 @@ const express_1 = __importDefault(require("express"));
 const path = __importStar(require("path"));
 const app = (0, express_1.default)();
 const port = 3001;
-app.use(express_1.default.static(__dirname));
+app.use(express_1.default.static(
+// get the absolute path to root directory
+path.join(__dirname, "../..")));
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../../calendar.html"));
 });
