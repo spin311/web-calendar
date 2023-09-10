@@ -13,8 +13,8 @@
     <h1>web calendar</h1>
 
     <div class="inputs">
-        <input type="text" list="month">
-        <datalist name="month" id="month">
+        <input type="text" list="month" id="months">
+        <!-- <datalist name="month" id="month">
             <option value="january">January</option>
             <option value="february">February</option>
             <option value="march">March</option>
@@ -27,8 +27,8 @@
             <option value="october">October</option>
             <option value="november">November</option>
             <option value="december">December</option>
-        </datalist>
-        <input type="number" value="2023" placeholder="year"></input>
+        </datalist> -->
+        <input id="year" type="number" value="2023" placeholder="year"></input>
     </div>
         <table class="table table-info table-width">
             <thead>
@@ -103,4 +103,6 @@
 <script> var exports = {}; </script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <!-- <script  type="module" src="http://localhost:3001/dist/src/script.js"></script> -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script src="http://localhost:3001/dist/bundle.js"></script>
+

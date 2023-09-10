@@ -1,4 +1,6 @@
 import $ from 'jquery';
+import 'jquery-ui/ui/widgets/autocomplete';
+
 function monthStart(month: number, year: number): number{
     const dateDay: Date = new Date(year, month, 1);
 
@@ -27,11 +29,42 @@ function getNuDays(month: number, year: number): number{
 $(function(){
     console.log("ready");
     $(document).on("blur", "input", function(){
-        let month: number, year: number;
+        let month: string, year: number;
         year = parseInt($("#year").val() as string);
-        month = parseInt($("#month").val() as string);
+        month = ($("#months").val() as string);
         console.log(month, year);
-        $("#tableHeader").val(month + " / " + year);
+        // $("#tableHeader").val(month + " / " + year);
+    });
+});
+
+
+$(function(){
+    console.log("ready");
+    $(document).on("blur", "input", function(){
+        let month: string, year: number;
+        year = parseInt($("#year").val() as string);
+        month = ($("#months").val() as string);
+        console.log(month, year);
+        // $("#tableHeader").val(month + " / " + year);
+    });
+
+    //autocomplete
+    const availableMonths = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ];
+    $("#months").autocomplete({
+        source: availableMonths
     });
 });
 
