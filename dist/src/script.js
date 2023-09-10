@@ -1,10 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var jquery_1 = require("jquery");
+const jquery_1 = __importDefault(require("jquery"));
 function monthStart(month, year) {
-    var dateDay = new Date(year, month, 1);
+    const dateDay = new Date(year, month, 1);
     // day =  0sunday-6saturday
-    var day = dateDay.getDay();
+    let day = dateDay.getDay();
     //want to return 0 for monday and 6 for sunday
     if (day === 0) {
         return 6;
@@ -17,16 +20,17 @@ function changeCalendar(month, year) {
 }
 //return number of days in a month
 function getNuDays(month, year) {
-    var lastDay = new Date(year, month, 0);
+    let lastDay = new Date(year, month, 0);
     return lastDay.getDate();
 }
-(0, jquery_1.default)(document).ready(function () {
+//run when page is loaded
+(0, jquery_1.default)(function () {
     console.log("ready");
-    (0, jquery_1.default)("input").on('change', function () {
+    (0, jquery_1.default)(document).on("blur", "input", function () {
         console.log("change");
-        var month, year;
+        let month, year;
         year = parseInt((0, jquery_1.default)("#year").val());
         month = parseInt((0, jquery_1.default)("#month").val());
         (0, jquery_1.default)("#tableHeader").val(month + " / " + year);
-    }, false);
+    });
 });
