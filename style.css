@@ -1,3 +1,16 @@
 .table-width{
     width: 30%;
+    
+
 }
+
+input[type="text"], input[type="number"] {
+    width: 15%;
+    box-sizing: border-box;
+
+}
+.inputs{
+    display: flex;
+    margin-bottom: 0.2rem;
+}
+

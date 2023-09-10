@@ -8,11 +8,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="container text-center">
     <h1>web calendar</h1>
 
-    <div>
-        <select name="month" id="month">
+    <div class="inputs">
+        <input type="text" list="month">
+        <datalist name="month" id="month">
             <option value="january">January</option>
             <option value="february">February</option>
             <option value="march">March</option>
@@ -25,9 +27,9 @@
             <option value="october">October</option>
             <option value="november">November</option>
             <option value="december">December</option>
-        </select>
+        </datalist>
         <input type="number" value="2023" placeholder="year"></input>
-
+    </div>
         <table class="table table-info table-width">
             <thead>
                 
@@ -92,10 +94,12 @@
             </tbody>
 
         </table>
+
+        
     </div>
-            </div>
 
 </body>
 </html>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script> var exports = {}; </script>
 <script src="./src/script.js"></script>
