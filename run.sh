@@ -27,8 +27,9 @@ while true; do
                 continue
             fi
         else
+            echo "compiling..."
+            npx webpack --config webpack.config.js
             echo "Running server in background..."
-            tsc
             node ./dist/server/server.js &
         fi
       
@@ -44,8 +45,9 @@ while true; do
             continue
         fi
     else
+        echo "compiling..."
+        npx webpack --config webpack.config.js
         echo "Running server in foreground..."
-        tsc
         node ./dist/server/server.js 
     fi
       
