@@ -27,10 +27,10 @@ function getNuDays(month: number, year: number): number{
 $(function(){
     console.log("ready");
     $(document).on("blur", "input", function(){
-        console.log("change");
         let month: number, year: number;
         year = parseInt($("#year").val() as string);
         month = parseInt($("#month").val() as string);
+        console.log(month, year);
         $("#tableHeader").val(month + " / " + year);
     });
 });
