@@ -15,23 +15,10 @@
 
     <div class="inputs">
         <input type="text" list="month" id="months" class="ui-widget ui-widget-content ui-corner-all">
-        <!-- <datalist name="month" id="month">
-            <option value="january">January</option>
-            <option value="february">February</option>
-            <option value="march">March</option>
-            <option value="april">April</option>
-            <option value="may">May</option>
-            <option value="june">June</option>
-            <option value="july">July</option>
-            <option value="august">August</option>
-            <option value="september">September</option>
-            <option value="october">October</option>
-            <option value="november">November</option>
-            <option value="december">December</option>
-        </datalist> -->
         <input id="year" type="number" value="2023" placeholder="year"></input>
+        <button id="buttonCal" class="btn btn-primary btn-width">submit</button>
     </div>
-        <table class="table table-info table-width tableCal">
+        <table class="table table-info table-width tableCal" id="calendar">
             <thead>
                 
                 <caption>2021.08</caption>
@@ -84,9 +71,9 @@
                     <td class="gray">28</td>
                 </tr>
                 <tr>
-                    <td class="gray"></td>
-                    <td class="gray"></td>
-                    <td class="gray"></td>
+                    <td class="gray">29</td>
+                    <td class="gray">30</td>
+                    <td class="gray">31</td>
                     <td class="gray"></td>
                     <td class="gray"></td>
                     <td class="gray"></td>
