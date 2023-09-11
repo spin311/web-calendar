@@ -17,17 +17,54 @@ function getMonthStart(month: number, year: number): number{
    
 }
 
-function changeCalendar(monthStart: number, nuDays: number): void{
+function getHolidayMap(holidayStr: string): Map<number, number[]> { 
+
+    if (holidayStr != "err"){
+        let holidayArray: string[] = [];
+        let holidayMap = new Map<number, number[]>();
+        holidayArray = holidayStr.split("\n");
+        holidayArray.forEach((element, index) => {
+        let holidayDate: number[];
+        let holidayRepeat: string[] = element.split(" ");
+        holidayDate = holidayRepeat[0].split("/").map(Number);
+        const day: number = holidayDate[0];
+        const month: number = holidayDate[1];
+        if (holidayMap.has(month)) {
+            holidayMap.get(month)?.push(day);
+
+        }
+        else {
+            holidayMap.set(month, [day]);
+        }
+    }
+    );
+    return holidayMap;
+
+    }
+    else{
+        console.log("cant get holidays");
+        return new Map<number, number[]>();
+    }
+}
+let holidayMap: Map<number, number[]>;
+$(function(){
     let holidays: Promise<string> = readTextFile("holidays");
     holidays.then((text) => {
-        console.log("holidays:",text);
-
+         holidayMap = getHolidayMap(text);
     });
+
+}); 
+
+function changeCalendar(monthStart: number, nuDays: number, month: number): void{
+   
+    let hasHoliday: boolean = holidayMap.has(month);    
+
+
     let currentDay: number = 1;
+    let holidayArr: number[] = [];
     let table: string = `
     <table class="table table-info table-width tableCal">
             <thead>
-                <caption>2021.08</caption>
                 <tr>
                     <th>mon</th>
                     <th>tue</th>
@@ -39,20 +76,36 @@ function changeCalendar(monthStart: number, nuDays: number): void{
                 </tr>
             </thead>
             <tbody>`;
+
+
+    if(hasHoliday){
+        holidayArr = holidayMap.get(month) as number[];
+    }
     for(var i = 0; currentDay <= nuDays; i++){ 
+        let classStr: string = "";
         if(i % 7 === 0){
             table += "<tr>";
         }
         if (i < monthStart){
             table += "<td></td>";
         }
+
+        //if current day is in the month
         else {
+            //check if current day is a holiday
+            if (hasHoliday){
+                if (holidayArr.includes(currentDay)){
+                    classStr = "text-success border border-4 border-success ";
+                }
+            }
+
             //sunday
             if(i % 7 === 6){
-                table += "<td class='table-danger'>" + currentDay + "</td> </tr>";
+                classStr += "table-danger";
+                table += "<td class='" + classStr+ "'>" + currentDay + "</td> </tr>";
             }
             else{
-                table += "<td>" + currentDay + "</td>";
+                table += "<td class='" + classStr+ "'>" + currentDay + "</td>";
             }
             currentDay++;
 
@@ -138,8 +191,7 @@ $(function(){
             monthNumber = monthMap.get(month) as number;
             nuDays = getNuDays(monthNumber, year);
             monthStart = getMonthStart(monthNumber, year);
-            console.log(monthNumber, "nuDays:", nuDays);
-            changeCalendar(monthStart, nuDays);
+            changeCalendar(monthStart, nuDays, monthNumber + 1);
 
           }
           else {
