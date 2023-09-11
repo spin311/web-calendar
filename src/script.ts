@@ -18,7 +18,11 @@ function getMonthStart(month: number, year: number): number{
 }
 
 function changeCalendar(monthStart: number, nuDays: number): void{
-    console.log("monthStart:",monthStart,"nuDays:" ,nuDays);
+    let holidays: Promise<string> = readTextFile("holidays");
+    holidays.then((text) => {
+        console.log("holidays:",text);
+
+    });
     let currentDay: number = 1;
     let table: string = `
     <table class="table table-info table-width tableCal">
@@ -54,7 +58,7 @@ function changeCalendar(monthStart: number, nuDays: number): void{
 
             }
         }
-    
+    //add empty cells to fill the row
     while (i % 7 != 0){
         table += "<td></td>";
         if (i % 7 === 6){
@@ -63,16 +67,31 @@ function changeCalendar(monthStart: number, nuDays: number): void{
         i++;
     }
     table += "</tbody></table>";
+    // insert table into html
     $("#calendar").html(table);
 
 }
+
+//read text file and return its content
+function readTextFile(file: string): Promise<string> {
+    return fetch(file)
+      .then((res) => res.text())
+      .then((text) => {
+        return text;
+      })
+      .catch((e) => {
+        console.error(e);
+        return "err";
+      });
+  }
+
 //return number of days in a month
 function getNuDays(month: number, year: number): number{
     let lastDay: Date = new Date(year, month + 1, 0);
     return lastDay.getDate();
 }
 
-    //autocomplete
+    //autocomplete months
     const availableMonths = [
         "January",
         "February",
@@ -100,7 +119,6 @@ $(function(){
         let month: string, year: number, monthNumber: number, nuDays: number, monthStart: number;
         year = parseInt($("#year").val() as string);
         month = ($("#months").val() as string);
-        console.log(month, year);
         //map month to number
         const monthMap = new Map<string, number>([
             ["January", 0],
