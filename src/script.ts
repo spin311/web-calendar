@@ -7,7 +7,7 @@ function getMonthStart(month: number, year: number): number{
 
     // day =  0sunday-6saturday
     let day: number = dateDay.getDay();
-    //want to return 0 for monday and 6 for sunday
+    //return 0 for monday and 6 for sunday
     if (day === 0){
         return 6;
     }
@@ -43,13 +43,18 @@ function changeCalendar(monthStart: number, nuDays: number): void{
             table += "<td></td>";
         }
         else {
-            table += "<td>" + currentDay + "</td>";
+            //sunday
+            if(i % 7 === 6){
+                table += "<td class='table-danger'>" + currentDay + "</td> </tr>";
+            }
+            else{
+                table += "<td>" + currentDay + "</td>";
+            }
             currentDay++;
+
+            }
         }
-        if (i % 7 === 6){
-            table += "</tr>";
-        }
-    }
+    
     while (i % 7 != 0){
         table += "<td></td>";
         if (i % 7 === 6){
@@ -125,48 +130,7 @@ $(function(){
           }
 
 
-      
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // let month: string, year: number;
-        // year = parseInt($("#year").val() as string);
-        // month = ($("#months").val() as string);
-        // console.log(month, year);
-        // // $("#tableHeader").val(month + " / " + year);
-        // let days: number = getNuDays(1, 2021);
-        // let start: number = monthStart(1, 2021);
-        // console.log(days, start);
-        // let table: string = "<table><tr><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Satuday</th><th>Sunday</th></tr>";
-        // let day: number = 1;
-        // let i: number = 0;
-        // while (day <= days){
-        //     table += "<tr>";
-        //     for (i = 0; i < 7; i++){
-        //         if (i < start){
-        //             table += "<td></td>";
-        //         }
-        //         else{
-        //             table += "<td>" + day + "</td>";
-        //             day++;
-        //         }
-        //     }
-        //     table += "</tr>";
-        // }
-        // table += "</table>";
-        // $("#calendar").html(table);
 });
 });
 

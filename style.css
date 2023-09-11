@@ -20,9 +20,10 @@ input[type="text"], input[type="number"] {
     margin-bottom: 0.2rem;
 }
 
-.tableCal td {
-    text-align: center;
-    min-height: 10000rem;
+
+
+.sunday td {
+    background-color: rgba(200, 10, 0, 0.9);
 }
 
 
