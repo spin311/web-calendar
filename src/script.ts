@@ -1,20 +1,28 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 
+const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
+const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 //return the day of the week the month starts on
 function getMonthStart(month: number, year: number): number{
-    const dateDay: Date = new Date(year, month, 1);
+    // January and February are counted as months 13 and 14 of the previous year
+    let newMonth: number = month;
+    if (month <= 1) {
+        newMonth += 12;
+        year -= 1;
+    }
 
-    // day =  0sunday-6saturday
-    let day: number = dateDay.getDay();
-    //return 0 for monday and 6 for sunday
-    if (day === 0){
-        return 6;
-    }
-    else{
-        return (day-1);
-    }
+    const dayOfWeek = Zeller(newMonth, year);
+    return (dayOfWeek+ 5) % 7;
    
+}
+
+// Zeller's Congruence algorithm
+//adopted from: https://en.wikipedia.org/wiki/Zeller%27s_congruence
+function Zeller(month: number, year: number): number{
+    const q = year % 100; //year of the century
+    const y = Math.floor(year / 100); //zero-based century
+    return (1 + Math.floor(13 * (month + 2) / 5) + q + Math.floor(q / 4) + Math.floor(y / 4) - 2 * y) % 7;
 }
 
 function getHolidayMap(holidayStr: string): Map<number, number[]> { 
@@ -25,7 +33,7 @@ function getHolidayMap(holidayStr: string): Map<number, number[]> {
         holidayArray = holidayStr.split("\n");
         holidayArray.forEach((element, index) => {
         let holidayDate: number[];
-        let holidayRepeat: string[] = element.split(" ");
+        const holidayRepeat: string[] = element.split(" ");
         holidayDate = holidayRepeat[0].split("/").map(Number);
         const day: number = holidayDate[0];
         const month: number = holidayDate[1];
@@ -47,8 +55,17 @@ function getHolidayMap(holidayStr: string): Map<number, number[]> {
     }
 }
 let holidayMap: Map<number, number[]>;
+
+//when page loads get holidays and disable button
 $(function(){
-    let holidays: Promise<string> = readTextFile("holidays");
+    console.log($("#months").val());
+    if ($("#months").val() === '') {
+    //disable button
+    $("#buttonCal").prop("disabled", true);
+    //give buttton disabled bootstrap class
+    $("#buttonCal").addClass("btn-secondary");
+    }
+    const holidays: Promise<string> = readTextFile("holidays");
     holidays.then((text) => {
          holidayMap = getHolidayMap(text);
     });
@@ -125,7 +142,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number): void
 
 }
 
-//read text file and return its content
+//read text file and return its content as a promise
 function readTextFile(file: string): Promise<string> {
     return fetch(file)
       .then((res) => res.text())
@@ -140,39 +157,56 @@ function readTextFile(file: string): Promise<string> {
 
 //return number of days in a month
 function getNuDays(month: number, year: number): number{
-    let lastDay: Date = new Date(year, month + 1, 0);
-    return lastDay.getDate();
+    if (month != 1) {
+        return daysInMonth[month];
+    }
+    else {
+        //leap year
+        if(year % 4 === 0 && year % 100 != 0 || year % 400 === 0) {
+            return 29;
+        }
+        return 28;
+    }
+
+    
 }
 
     //autocomplete months
-    const availableMonths = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    ];
+
     $("#months").autocomplete({
-        source: availableMonths,
+        source: months,
         minLength: 0 // Set the minimum length to 0 to show all options on click
     }).on("click", function() {
         $(this).autocomplete("search", "");
     });
 $(function(){
+    $(document).on("change", "#datePick", function(){
+        const dateValue: string = $("#datePick").val() as string;
+        const dateArr: string[] = dateValue.split("-");
+        const year: number = parseInt(dateArr[0]);
+        const month: number = parseInt(dateArr[1]) - 1;
+        const nuDays: number = getNuDays(month, year);
+        const monthStart: number = getMonthStart(month, year);
+        changeCalendar(monthStart, nuDays, month + 1);
+
+    });
+});
+
+$(function(){
+    $(document).on("autocompleteselect", function(){
+        $("#buttonCal").prop("disabled", false);
+        $("#buttonCal").removeClass("btn-secondary");
+        $("#buttonCal").addClass("btn-primary");
+    });
+});
+
+$(function(){
     $(document).on("click", "#buttonCal", function(){
     
-        // TODO: check that all inputs have value / give them starting value, disable button if not
-        let month: string, year: number, monthNumber: number, nuDays: number, monthStart: number;
-        year = parseInt($("#year").val() as string);
-        month = ($("#months").val() as string);
+        const year: number = parseInt($("#year").val() as string);
+        const month: string = ($("#months").val() as string);
         //map month to number
+
         const monthMap = new Map<string, number>([
             ["January", 0],
             ["February", 1],
@@ -188,9 +222,9 @@ $(function(){
             ["December", 11]
           ]);
           if(monthMap.get(month) != undefined) {
-            monthNumber = monthMap.get(month) as number;
-            nuDays = getNuDays(monthNumber, year);
-            monthStart = getMonthStart(monthNumber, year);
+            const monthNumber: number = monthMap.get(month) as number;
+            const nuDays: number = getNuDays(monthNumber, year);
+            const monthStart: number = getMonthStart(monthNumber, year);
             changeCalendar(monthStart, nuDays, monthNumber + 1);
 
           }
