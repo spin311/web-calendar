@@ -55,7 +55,7 @@ function getHolidayMap(holidayStr: string): Map<string, string[][]> {
         }
         else {
             const year: string = holidayDate[2];
-            const holidate: any[] = [day, year, name];
+            const holidate: string[] = [day, year, name];
             if (holidayMap.has(month)) {
                 holidayMap.get(month)?.push(holidate);
     
@@ -79,7 +79,6 @@ function getHolidayMap(holidayStr: string): Map<string, string[][]> {
 
 //when page loads get holidays and disable button
 $(function(){
-    console.log($("#months").val());
     if ($("#months").val() === '') {
     //disable button
     $("#buttonCal").prop("disabled", true);
@@ -98,7 +97,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
 
 
     let currentDay: number = 1;
-    let holidayArr: any[][];
+    let holidayArr: string[][];
     let tableBody: string = "";
 
 
@@ -108,7 +107,6 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
     else {
         holidayArr = [];
     }
-    console.log(holidayArr);
 
     for(var i = 0; currentDay <= nuDays; i++){ 
         let classStr: string = "";
@@ -200,7 +198,6 @@ $(function(){
     $(document).on("change", "#datePick", function(){
         const dateValue: string = $("#datePick").val() as string;
         if(!dateRegex.test(dateValue)){
-            console.log(dateValue);
             $("#errMsg").text("Invalid date format");
 
         }

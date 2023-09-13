@@ -1,10 +1,6 @@
-/* td {
-    max-width: 60px;
-} */
+
 body{
-    /* background-image: url("./img/background.jpg");
-    background-size: cover;
-    background-repeat: no-repeat; */
+
     background-color: rgba(207, 244, 252, 0.5);
 }
 
@@ -28,9 +24,35 @@ h1 {
     border-radius: 13px;
 }
 
-/* .inputs{
-    display: flex;
-    margin-bottom: 0.2rem;
-} */
+
+th {
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+}
+
+td {
+    text-align: center;
+    padding: 5px;
+}
+
+
+#months,
+#year,
+#datePick {
+    width: 100%;
+    padding: 3px;
+    border-radius: 10px;
+    background-color: #e6f9fd;
+}
+.theadColor {
+    background-color:  rgb(167, 230, 245);
+}
+
+
+#buttonCal {
+    width: 100%;
+}
+
 
 
