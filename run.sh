@@ -12,14 +12,14 @@ function checkConnection {
 }
 
 while true; do
-  echo "Enter a command ( r=run in background, f=run in foreground, s=stop server, x=exit):"
+  echo -e "Enter a command:\n r=compile and run in background f=compile and run in foreground\n c=compile, s=stop server, x=exit:"
   read input
 
   case $input in
     r)
       checkConnection
         if [ $? -eq 1 ]; then
-            echo "Process already running on port $port.\n Press 1 if you want to kill the process and 0 to continue"
+            echo -e "Process already running on port $port.\n Press 1 if you want to kill the process and 0 to continue"
             read decision
             if [ $decision -eq 1 ]; then
                 kill $(lsof -t -i :$port)
@@ -34,6 +34,10 @@ while true; do
         fi
       
       ;;
+    c)
+      echo "compiling..."
+      npx webpack --config webpack.config.js
+    ;;
     f)
  checkConnection
     if [ $? -eq 1 ]; then

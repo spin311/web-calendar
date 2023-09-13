@@ -236,7 +236,7 @@ $(function(){
         }
         else {
             $("#calendar").show();
-            $("#minimise").text("—");
+            $("#minimise").text("X");
             $("#minimise").attr("title", "minimise calendar");
 
             tableVisible = true;
