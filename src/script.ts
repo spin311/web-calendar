@@ -7,12 +7,13 @@ const months: string[] = ["January","February","March","April","May","June","Jul
 function getMonthStart(month: number, year: number): number{
     // January and February are counted as months 13 and 14 of the previous year
     let newMonth: number = month;
+    let newYear: number = year;
     if (month <= 1) {
         newMonth += 12;
-        year -= 1;
+        newYear -= 1;
     }
 
-    const dayOfWeek = Zeller(newMonth, year);
+    const dayOfWeek = Zeller(newMonth, newYear);
     return (dayOfWeek+ 5) % 7;
    
 }
@@ -79,20 +80,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number): void
 
     let currentDay: number = 1;
     let holidayArr: number[] = [];
-    let table: string = `
-    <table class="table table-info table-width tableCal">
-            <thead>
-                <tr>
-                    <th>mon</th>
-                    <th>tue</th>
-                    <th>wed</th>
-                    <th>thu</th>
-                    <th>fri</th>
-                    <th>sat</th>
-                    <th>sun</th>
-                </tr>
-            </thead>
-            <tbody>`;
+    let tableBody: string = "";
 
 
     if(hasHoliday){
@@ -101,10 +89,10 @@ function changeCalendar(monthStart: number, nuDays: number, month: number): void
     for(var i = 0; currentDay <= nuDays; i++){ 
         let classStr: string = "";
         if(i % 7 === 0){
-            table += "<tr>";
+            tableBody += "<tr>";
         }
         if (i < monthStart){
-            table += "<td></td>";
+            tableBody += "<td></td>";
         }
 
         //if current day is in the month
@@ -119,10 +107,10 @@ function changeCalendar(monthStart: number, nuDays: number, month: number): void
             //sunday
             if(i % 7 === 6){
                 classStr += "table-danger";
-                table += "<td class='" + classStr+ "'>" + currentDay + "</td> </tr>";
+                tableBody += "<td class='" + classStr+ "'>" + currentDay + "</td> </tr>";
             }
             else{
-                table += "<td class='" + classStr+ "'>" + currentDay + "</td>";
+                tableBody += "<td class='" + classStr+ "'>" + currentDay + "</td>";
             }
             currentDay++;
 
@@ -130,15 +118,14 @@ function changeCalendar(monthStart: number, nuDays: number, month: number): void
         }
     //add empty cells to fill the row
     while (i % 7 != 0){
-        table += "<td></td>";
+        tableBody += "<td></td>";
         if (i % 7 === 6){
-            table += "</tr>";
+            tableBody += "</tr>";
         }
         i++;
     }
-    table += "</tbody></table>";
     // insert table into html
-    $("#calendar").html(table);
+    $("#bodyCal").html(tableBody);
 
 }
 
@@ -146,9 +133,6 @@ function changeCalendar(monthStart: number, nuDays: number, month: number): void
 function readTextFile(file: string): Promise<string> {
     return fetch(file)
       .then((res) => res.text())
-      .then((text) => {
-        return text;
-      })
       .catch((e) => {
         console.error(e);
         return "err";
