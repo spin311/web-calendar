@@ -5,10 +5,10 @@ const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
 const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const dateRegex: RegExp = new RegExp("^\\d{1,2}/\\d{1,2}/\\d+$");
 
-let holidayMap: Map<number, any[][]>;
+let holidayMap: Map<string, string[][]>;
 //return the day of the week the month starts on
 function getMonthStart(month: number, year: number): number{
-    // January and February are counted as months 13 and 14 of the previous year
+    // January and February are counted as months 13 and 14 of the previous year for Zeller's algorithm
     let newMonth: number = month;
     let newYear: number = year;
     if (month <= 1) {
@@ -31,17 +31,17 @@ function Zeller(month: number, year: number): number{
 
 
 
-function getHolidayMap(holidayStr: string): Map<number, any[][]> { 
+function getHolidayMap(holidayStr: string): Map<string, string[][]> { 
 
     if (holidayStr != "err"){
         let holidayArray: string[] = [];
-        holidayMap = new Map<number, any[][]>();
+        holidayMap = new Map<string, string[][]>();
         holidayArray = holidayStr.split("\n");
         holidayArray.forEach((element) => {
         const holidayRepeat: string[] = element.split(" ");
-        const holidayDate: number[] = holidayRepeat[0].split("/").map(Number);
-        const day: number = holidayDate[0];
-        const month: number = holidayDate[1];
+        const holidayDate: string[] = holidayRepeat[0].split("/");
+        const day: string = holidayDate[0];
+        const month: string = holidayDate[1];
         const name: string = holidayRepeat[2];
         if(holidayRepeat[1] === "n"){
             if (holidayMap.has(month)) {
@@ -54,7 +54,7 @@ function getHolidayMap(holidayStr: string): Map<number, any[][]> {
 
         }
         else {
-            const year: number = holidayDate[2];
+            const year: string = holidayDate[2];
             const holidate: any[] = [day, year, name];
             if (holidayMap.has(month)) {
                 holidayMap.get(month)?.push(holidate);
@@ -73,7 +73,7 @@ function getHolidayMap(holidayStr: string): Map<number, any[][]> {
     }
     else{
         console.log("cant get holidays");
-        return new Map<number, any[][]>();
+        return new Map<string, string[][]>();
     }
 }
 
@@ -83,7 +83,6 @@ $(function(){
     if ($("#months").val() === '') {
     //disable button
     $("#buttonCal").prop("disabled", true);
-    //give buttton disabled bootstrap class
     $("#buttonCal").addClass("btn-secondary");
     }
     const holidays: Promise<string> = readTextFile("holidays");
@@ -94,8 +93,8 @@ $(function(){
 }); 
 
 function changeCalendar(monthStart: number, nuDays: number, month: number, year: number): void{
-   
-    let hasHoliday: boolean = holidayMap.has(month);    
+    let monthStr: string = month.toString();
+    let hasHoliday: boolean = holidayMap.has(monthStr);    
 
 
     let currentDay: number = 1;
@@ -104,7 +103,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
 
 
     if(hasHoliday){
-        holidayArr = holidayMap.get(month) as any[][];
+        holidayArr = holidayMap.get(monthStr) as string[][];
     }
     else {
         holidayArr = [];
@@ -126,11 +125,11 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
             //check if current day is a holiday
             if (hasHoliday){
                 holidayArr.forEach((element) => {
-                    if(element.length === 2 && element[0] === currentDay) {
+                    if(element.length === 2 && parseInt(element[0]) === currentDay) {
                         classStr = "text-success border border-4 border-success ";
                         titleStr = element[1].replace("-", " ");
                     }
-                    else if(element.length === 3 && element[0] === currentDay && element[1] === year){
+                    else if(element.length === 3 && parseInt(element[0]) === currentDay && parseInt(element[1]) === year){
                         classStr = "text-success border border-4 border-warning ";
                         titleStr = element[2].replace("-", " ");
                     }
