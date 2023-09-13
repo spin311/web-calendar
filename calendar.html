@@ -13,18 +13,31 @@
     <div class="container text-center">
     <h1>web calendar</h1>
 
-    <div class="inputs">
-        <input type="text" list="month" id="months" class="ui-widget ui-widget-content ui-corner-all">
-        <label for="year">Year:</label>
-        
-        <input id="year" type="number" value="2023" placeholder="year"></input>
-        <button id="buttonCal" class="btn btn-primary btn-width">submit</button>
-    </div>
-    <label for="start">Start date:</label>
-    <input type="date" id="datePick"/>
+    <div class="table-responsive">
+       
+
         <table class="table table-info table-width tableCal" id="calendar">
             <thead>
-                
+                <tr>
+                   <td colspan="3">
+                        <label for="months">Month:</label>
+                        <input type="text" list="month" id="months" class="ui-widget ui-widget-content ui-corner-all">
+                    </td>
+
+                    <td colspan="3">
+                        <label for="year">Year:</label> 
+                        <input id="year" type="number" value="2023" placeholder="year">
+
+                    </td>
+                   <td colspan="1"> <button id="buttonCal" class="btn btn-primary btn-width">submit</button></td>
+                </tr>
+                <tr>
+                   
+                    <td colspan="4">
+                        <label for="datePick">Pick a date:</label>
+                        <input type="text" id="datePick" minlength="5" placeholder="dd/mm/yyyy"> <span class="ml-1" id="emojiCal">📅 </span></td>
+                    <td colspan="3"><span id="errMsg" class="text-danger"></span> </td>
+                </tr>   
                 <tr>
                     <th>mon</th>
                     <th>tue</th>
@@ -85,7 +98,7 @@
             </tbody>
 
         </table>
-
+    </div>
         
     </div>
 

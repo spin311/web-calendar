@@ -1,23 +1,15 @@
-.table-width{
-    width: 50%;
-    height: 60%;
-    
+/* td {
+    max-width: 60px;
+} */
 
-}
 
 .btn-width {
-    width: 5%;
     text-align: center;
 }
 
-input[type="text"], input[type="number"] {
-    width: 22.5%;
-    box-sizing: border-box;
-
-}
-.inputs{
+/* .inputs{
     display: flex;
     margin-bottom: 0.2rem;
-}
+} */
 
 

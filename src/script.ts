@@ -3,6 +3,7 @@ import 'jquery-ui/ui/widgets/autocomplete';
 
 const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
 const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const dateRegex: RegExp = new RegExp("^\\d{1,2}/\\d{1,2}/\\d+$");
 //return the day of the week the month starts on
 function getMonthStart(month: number, year: number): number{
     // January and February are counted as months 13 and 14 of the previous year
@@ -166,15 +167,25 @@ function getNuDays(month: number, year: number): number{
 $(function(){
     $(document).on("change", "#datePick", function(){
         const dateValue: string = $("#datePick").val() as string;
-        const dateArr: string[] = dateValue.split("-");
-        const year: number = parseInt(dateArr[0]);
-        const month: number = parseInt(dateArr[1]) - 1;
-        const nuDays: number = getNuDays(month, year);
-        const monthStart: number = getMonthStart(month, year);
-        changeCalendar(monthStart, nuDays, month + 1);
+        if(!dateRegex.test(dateValue)){
+            console.log(dateValue);
+            $("#errMsg").text("Invalid date format");
+
+        }
+        else {
+            $("#errMsg").text("");
+            const dateArr: string[] = dateValue.split("/");
+            const year: number = parseInt(dateArr[2]);
+            const month: number = parseInt(dateArr[1]) - 1;
+            const nuDays: number = getNuDays(month, year);
+            const monthStart: number = getMonthStart(month, year);
+            changeCalendar(monthStart, nuDays, month + 1);
+        }
+
 
     });
 });
+
 
 $(function(){
     $(document).on("autocompleteselect", function(){
