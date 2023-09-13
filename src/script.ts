@@ -225,6 +225,26 @@ $(function(){
 });
 
 $(function(){
+    let tableVisible: boolean = true;
+    $(document).on("click", "#minimise", function(){
+        if(tableVisible){
+            $("#calendar").hide();
+            $("#minimise").text("^");
+            $("#minimise").attr("title", "show calendar");
+
+            tableVisible = false;
+        }
+        else {
+            $("#calendar").show();
+            $("#minimise").text("—");
+            $("#minimise").attr("title", "minimise calendar");
+
+            tableVisible = true;
+        }
+    });
+});
+
+$(function(){
     $(document).on("click", "#buttonCal", function(){
     
         const year: number = parseInt($("#year").val() as string);
