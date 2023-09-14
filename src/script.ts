@@ -174,7 +174,12 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
 //read text file and return its content as a promise
 function readTextFile(file: string): Promise<string> {
     return fetch(file)
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.text();
+      })
       .catch((e) => {
         console.error(e);
         return "err";
