@@ -84,7 +84,7 @@ $(function(){
     $("#buttonCal").prop("disabled", true);
     $("#buttonCal").addClass("btn-secondary");
     }
-    const holidays: Promise<string> = readTextFile("holidays");
+    const holidays: Promise<string> = readTextFile("./holidays");
     holidays.then((text) => {
          holidayMap = getHolidayMap(text);
     });
