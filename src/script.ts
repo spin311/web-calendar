@@ -5,7 +5,13 @@ import 'jquery-ui/ui/widgets/autocomplete';
 const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
 const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const dateRegex: RegExp = new RegExp("^\\d{1,2}/\\d{1,2}/\\d+$");
-let holidayMap: Map<string, string[][]>;
+let holidayMap: Map<number, Holiday[]>;
+
+interface Holiday {
+    day: number;
+    name: string;
+    year?: number;
+}
 
 //return the day of the week the month starts on
 function getMonthStart(month: number, year: number): number{
@@ -32,44 +38,31 @@ function Zeller(month: number, year: number): number{
 
 
 //return a map of holidays: key=month, value= array of holidays(day, name, optional:year)
-function getHolidayMap(holidayStr: string): Map<string, string[][]> { 
+function getHolidayMap(holidayStr: string): Map<number, Holiday[]> { 
 
     if (holidayStr != "err"){
         let holidayArray: string[] = [];
-        holidayMap = new Map<string, string[][]>();
+        holidayMap = new Map<number, Holiday[]>();
         holidayArray = holidayStr.split("\n");
 
         //split each holiday into an array of [date, name]
         holidayArray.forEach((element) => {
         const holidayRepeat: string[] = element.split(" ");
         const holidayDate: string[] = holidayRepeat[0].split("/");
-        const day: string = holidayDate[0];
-        const month: string = holidayDate[1];
+        const day: number = parseInt(holidayDate[0]);
+        const month: number = parseInt(holidayDate[1]);
         const name: string = holidayRepeat[2];
-
-        //if holiday has the same date every year
-        if(holidayRepeat[1] === "n"){
-            if (holidayMap.has(month)) {
-                holidayMap.get(month)?.push([day, name]);
-    
-            }
-            else {
-                holidayMap.set(month, [[day, name]]);
-            }
-
-        }
+        let holidate: Holiday = {day: day, name: name};
         //holiday only occurs on a specific year
+        if(holidayRepeat[1] === "p"){
+            const year: number = parseInt(holidayDate[2]);
+            holidate.year = year;
+        }
+        if (holidayMap.has(month)) {
+            holidayMap.get(month)?.push(holidate);
+        }
         else {
-            const year: string = holidayDate[2];
-            const holidate: string[] = [day, year, name];
-            if (holidayMap.has(month)) {
-                holidayMap.get(month)?.push(holidate);
-    
-            }
-            else {
-                holidayMap.set(month, [holidate]);
-            }
-
+            holidayMap.set(month, [holidate]);
         }
 
     }
@@ -79,7 +72,7 @@ function getHolidayMap(holidayStr: string): Map<string, string[][]> {
     }
     else{
         console.log("cant get holidays");
-        return new Map<string, string[][]>();
+        return new Map<number, Holiday[]>();
     }
 }
 
@@ -99,20 +92,16 @@ $(function(){
 
 //change calendar to display the month and year
 function changeCalendar(monthStart: number, nuDays: number, month: number, year: number): void{
-    let monthStr: string = month.toString();
-    let hasHoliday: boolean = holidayMap.has(monthStr);    
+    let hasHoliday: boolean = holidayMap.has(month);    
 
 
     let currentDay: number = 1;
-    let holidayArr: string[][];
+    let holidayArr: Holiday[] = [];
     let tableBody: string = "";
 
 
     if(hasHoliday){
-        holidayArr = holidayMap.get(monthStr) as string[][];
-    }
-    else {
-        holidayArr = [];
+        holidayArr = holidayMap.get(month) as Holiday[];
     }
 
     for(var i = 0; currentDay <= nuDays; i++){ 
@@ -133,13 +122,15 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
             //check if current day is a holiday
             if (hasHoliday){
                 holidayArr.forEach((element) => {
-                    if(element.length === 2 && parseInt(element[0]) === currentDay) {
+                    if(!element.hasOwnProperty("year") && element.day === currentDay) {
                         classStr = "text-success border border-4 border-success ";
-                        titleStr = element[1].replace("-", " ");
+                        titleStr = element.name.replace("-", " ");
                     }
-                    else if(element.length === 3 && parseInt(element[0]) === currentDay && parseInt(element[1]) === year){
+
+
+                    else if(element.hasOwnProperty("year") && element.day === currentDay && element.year === year){
                         classStr = "text-success border border-4 border-warning ";
-                        titleStr = element[2].replace("-", " ");
+                        titleStr = element.name.replace("-", " ");
                     }
 
                 });
@@ -212,6 +203,7 @@ function getNuDays(month: number, year: number): number{
 
 //date input
 $(function(){
+
     $(document).on("change", "#datePick", function(){
         const dateValue: string = $("#datePick").val() as string;
 
