@@ -262,14 +262,14 @@ $(function(){
         if(tableVisible){
             $("#calendar").hide();
             $("#minimise").text("^");
-            $("#minimise").attr("title", "show calendar");
+            $("#x-button").attr("title", "show calendar");
 
             tableVisible = false;
         }
         else {
             $("#calendar").show();
             $("#minimise").text("X");
-            $("#minimise").attr("title", "minimise calendar");
+            $("#x-button").attr("title", "minimise calendar");
 
             tableVisible = true;
         }
