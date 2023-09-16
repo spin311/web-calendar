@@ -1,21 +1,24 @@
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/autocomplete';
 
-//consts for calendar
-const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
-const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const dateRegex: RegExp = new RegExp("^\\d{1,2}/\\d{1,2}/\\d+$");
-let holidayMap: Map<number, Holiday[]>;
-
+//interface for holiday date and name
 interface Holiday {
     day: number;
     name: string;
     year?: number;
 }
 
-//return the day of the week the month starts on
+//consts for calendar
+const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
+const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const dateRegex: RegExp = new RegExp("^\\d{1,2}/\\d{1,2}/\\d+$");
+
+//map to store holidays: key=month, value= array of holidays(day, name, optional:year)
+let holidayMap: Map<number, Holiday[]>;
+
+//return the day of the week the month starts on (0Monday-6Sunday)
 function getMonthStart(month: number, year: number): number{
-    // January and February are counted as months 13 and 14 of the previous year for Zeller's algorithm
+    // January and February are counted as months 13 and 14 of the previous year
     let newMonth: number = month;
     let newYear: number = year;
     if (month <= 1) {
@@ -37,7 +40,7 @@ function Zeller(month: number, year: number): number{
 }
 
 
-//return a map of holidays: key=month, value= array of holidays(day, name, optional:year)
+//return a map of holidays: key=month, value= array of holidays(day, name, optional:year) from a string of holidays
 function getHolidayMap(holidayStr: string): Map<number, Holiday[]> { 
 
     if (holidayStr != "err"){
@@ -47,21 +50,29 @@ function getHolidayMap(holidayStr: string): Map<number, Holiday[]> {
 
         //split each holiday into an array of [date, name]
         holidayArray.forEach((element) => {
-        const holidayRepeat: string[] = element.split(" ");
-        const holidayDate: string[] = holidayRepeat[0].split("/");
+
+        //split into: (date, type, name)
+        const holidayInfo: string[] = element.split(" ");
+
+        //split date into: (day, month, year: optional)
+        const holidayDate: string[] = holidayInfo[0].split("/");
         const day: number = parseInt(holidayDate[0]);
         const month: number = parseInt(holidayDate[1]);
-        const name: string = holidayRepeat[2];
+        const name: string = holidayInfo[2];
+
         let holidate: Holiday = {day: day, name: name};
+
         //holiday only occurs on a specific year
-        if(holidayRepeat[1] === "p"){
+        if(holidayInfo[1] === "p"){
             const year: number = parseInt(holidayDate[2]);
             holidate.year = year;
         }
+        //add holiday to correct month
         if (holidayMap.has(month)) {
             holidayMap.get(month)?.push(holidate);
         }
         else {
+            //create new Holiday array
             holidayMap.set(month, [holidate]);
         }
 
@@ -83,6 +94,7 @@ $(function(){
     $("#buttonCal").prop("disabled", true);
     $("#buttonCal").addClass("btn-secondary");
     }
+    //fill holidays map with holidays from text file (async)
     const holidays: Promise<string> = readTextFile("holidays");
     holidays.then((text) => {
          holidayMap = getHolidayMap(text);
@@ -90,13 +102,15 @@ $(function(){
 
 }); 
 
-//change calendar to display the month and year
+//change calendar to display the selected month and year
 function changeCalendar(monthStart: number, nuDays: number, month: number, year: number): void{
+    //check if selected month has holidays
     let hasHoliday: boolean = holidayMap.has(month);    
 
-
+    //counter for current day to be displayed
     let currentDay: number = 1;
     let holidayArr: Holiday[] = [];
+    //table to be inserted into html
     let tableBody: string = "";
 
 
@@ -119,26 +133,30 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
 
         //if current day is in the month
         else {
-            //check if current day is a holiday
-            if (hasHoliday){
-                holidayArr.forEach((element) => {
-                    if(!element.hasOwnProperty("year") && element.day === currentDay) {
+
+        //check if current day is a holiday
+        if (hasHoliday) {
+            for (let i = 0; i < holidayArr.length; i++) {
+                const element = holidayArr[i];
+                if (element.day === currentDay) {
+                    //repeating holiday
+                    if (!element.hasOwnProperty("year")) {
                         classStr = "text-success border border-4 border-success ";
                         titleStr = element.name.replace("-", " ");
-                    }
 
-
-                    else if(element.hasOwnProperty("year") && element.day === currentDay && element.year === year){
+                    //holiday only occurs on a specific year
+                    } else if (element.year === year) {
                         classStr = "text-success border border-4 border-warning ";
                         titleStr = element.name.replace("-", " ");
                     }
-
-                });
+                    break;
+                }
             }
-
+        }
             //sunday (end row)
             if(i % 7 === 6){
                 classStr += "table-danger";
+                //add class and title to cell
                 tableBody += "<td class='" + classStr+ "' title='" + titleStr+ "'>" + currentDay + "</td> </tr>";
             }
             //other days
@@ -262,6 +280,7 @@ $(function(){
 $(function(){
     $(document).on("click", "#buttonCal", function(){
     
+        //get input values
         const year: number = parseInt($("#year").val() as string);
         const month: string = ($("#months").val() as string);
         
@@ -281,7 +300,7 @@ $(function(){
             ["December", 11]
           ]);
           if(monthMap.get(month) != undefined) {
-            //get input values, change calendar
+            //get month values, change calendar
             const monthNumber: number = monthMap.get(month) as number;
             const nuDays: number = getNuDays(monthNumber, year);
             const monthStart: number = getMonthStart(monthNumber, year);
