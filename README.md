@@ -27,7 +27,7 @@ The calendar provides the following functionality:
 
 Site is deployed and available with github-pages at: https://spin311.github.io/web-calendar/
 
-You can fork repository and run it localy using command `npm start`
+You can fork repository and run it localy using command `npm install` and then `npm start`
 
 OR
 
