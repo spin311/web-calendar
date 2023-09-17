@@ -19,9 +19,9 @@ The calendar provides the following functionality:
 - `calendar.html`: main HTML for calendar interface
 - `/styles/style.css`: styles for the calendar interface
 - `/src/script.ts`: typescript for calendar logic and DOM manipulation
-- `/server/server.ts`: 
+- `/server/server.ts`: simple express server that runs on port 3001
 - `run.sh`: bash script with simple commands to run/compile program
-- `/dist`: compiled .js files
+- `/dist`: compiled .js files from .ts
 
 ## Run program
 
