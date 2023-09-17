@@ -16,11 +16,12 @@ The calendar provides the following functionality:
 
 ## Project structure
 
-- calendar.html: main HTML for calendar interface
-- /styles/style.css: styles for the calendar interface
-- /src/script.ts: typescript for calendar logic and DOM manipulation
-- /server/server.ts: 
-- run.sh: bash script with simple commands to run/compile program
+- `calendar.html`: main HTML for calendar interface
+- `/styles/style.css`: styles for the calendar interface
+- `/src/script.ts`: typescript for calendar logic and DOM manipulation
+- `/server/server.ts`: 
+- `run.sh`: bash script with simple commands to run/compile program
+- `/dist`: compiled .js files
 
 ## Run program
 
