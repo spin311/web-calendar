@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  mode: "development",
   entry: "./src/script.ts",
   output: {
     path: path.resolve(__dirname, "dist"),
