@@ -11,6 +11,8 @@ interface Holiday {
 //consts for calendar
 const daysInMonth: number[] = [31,28,31,30,31,30,31,31,30,31,30,31];
 const months: string[] = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+//regex for date input (dd/mm/yyyy)-> 1 or 2 digits, /, 1 or 2 digits, /, 1 or more digits
 const dateRegex: RegExp = new RegExp("^\\d{1,2}/\\d{1,2}/\\d+$");
 
 //map to store holidays: key=month, value= array of holidays(day, name, optional:year)
@@ -25,9 +27,9 @@ function getMonthStart(month: number, year: number): number{
         newMonth += 12;
         newYear -= 1;
     }
-
+    //returns 0Saturday-6Friday
     const dayOfWeek = Zeller(newMonth, newYear);
-    return (dayOfWeek+ 5) % 7;
+    return (dayOfWeek + 5) % 7;
    
 }
 
@@ -44,11 +46,12 @@ function Zeller(month: number, year: number): number{
 function getHolidayMap(holidayStr: string): Map<number, Holiday[]> { 
 
     if (holidayStr != "err"){
-        let holidayArray: string[] = [];
-        holidayMap = new Map<number, Holiday[]>();
-        holidayArray = holidayStr.split("\n");
 
-        //split each holiday into an array of [date, name]
+        //map to store holidays: key=month, value= array of holidays(day, name, optional:year)
+        let holidayMapResult = new Map<number, Holiday[]>();
+        const holidayArray = holidayStr.split("\n");
+
+        //split each holiday string
         holidayArray.forEach((element) => {
 
         //split into: (date, type, name)
@@ -60,6 +63,7 @@ function getHolidayMap(holidayStr: string): Map<number, Holiday[]> {
         const month: number = parseInt(holidayDate[1]);
         const name: string = holidayInfo[2];
 
+        //create holiday object
         let holidate: Holiday = {day: day, name: name};
 
         //holiday only occurs on a specific year
@@ -68,17 +72,17 @@ function getHolidayMap(holidayStr: string): Map<number, Holiday[]> {
             holidate.year = year;
         }
         //add holiday to correct month
-        if (holidayMap.has(month)) {
-            holidayMap.get(month)?.push(holidate);
+        if (holidayMapResult.has(month)) {
+            holidayMapResult.get(month)?.push(holidate);
         }
         else {
             //create new Holiday array
-            holidayMap.set(month, [holidate]);
+            holidayMapResult.set(month, [holidate]);
         }
 
     }
     );
-    return holidayMap;
+    return holidayMapResult;
 
     }
     else{
@@ -98,6 +102,8 @@ $(function(){
     const holidays: Promise<string> = readTextFile("holidays");
     holidays.then((text) => {
          holidayMap = getHolidayMap(text);
+    }).catch((e) => {
+        console.error("Error loading holidays",e);
     });
 
 }); 
@@ -105,11 +111,12 @@ $(function(){
 //change calendar to display the selected month and year
 function changeCalendar(monthStart: number, nuDays: number, month: number, year: number): void{
     //check if selected month has holidays
-    let hasHoliday: boolean = holidayMap.has(month);    
+    const hasHoliday: boolean = holidayMap.has(month);    
 
     //counter for current day to be displayed
     let currentDay: number = 1;
     let holidayArr: Holiday[] = [];
+
     //table to be inserted into html
     let tableBody: string = "";
 
@@ -131,7 +138,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
             tableBody += "<td></td>";
         }
 
-        //if current day is in the month
+        //if current day should be displayed
         else {
 
         //check if current day is a holiday
@@ -139,6 +146,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
             for (let i = 0; i < holidayArr.length; i++) {
                 const element = holidayArr[i];
                 if (element.day === currentDay) {
+
                     //repeating holiday
                     if (!element.hasOwnProperty("year")) {
                         classStr = "text-success border border-4 border-success ";
@@ -149,6 +157,7 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
                         classStr = "text-success border border-4 border-warning ";
                         titleStr = element.name.replace("-", " ");
                     }
+                    //we found the currentDay holiday, break out of loop (we assume there is only one holiday per day)
                     break;
                 }
             }
@@ -164,9 +173,9 @@ function changeCalendar(monthStart: number, nuDays: number, month: number, year:
                 tableBody += "<td class='" + classStr+ "' title='" + titleStr+ "'>" + currentDay + "</td>";
             }
             currentDay++;
-
             }
         }
+
     //add empty cells to fill the row
     while (i % 7 != 0){
         tableBody += "<td></td>";
@@ -299,9 +308,9 @@ $(function(){
             ["November", 10],
             ["December", 11]
           ]);
-          if(monthMap.get(month) != undefined) {
+          const monthNumber: number | undefined = monthMap.get(month);  
+          if(monthNumber != undefined) {
             //get month values, change calendar
-            const monthNumber: number = monthMap.get(month) as number;
             const nuDays: number = getNuDays(monthNumber, year);
             const monthStart: number = getMonthStart(monthNumber, year);
             changeCalendar(monthStart, nuDays, monthNumber + 1, year);
